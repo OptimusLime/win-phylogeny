@@ -1,0 +1,18 @@
+{
+  "name": "win-phylogeny",
+  "version": "0.0.1",
+  "description": "WIN Module for fetching phylogeny info.",
+  "scripts": [
+    "lib/win-phylogeny.js"
+  ],
+  "main": "lib/win-phylogeny.js",
+  "dependencies" : {
+    "optimuslime/traverse" : "*"
+  },
+  "development" : {
+    "optimuslime/win-backbone" : "*",
+    "optimuslime/win-utils" : "*",
+    "optimuslime/win-data" : "*"
+     
+  }
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title></title>
+	<script type="text/javascript" src="/build/build.js"></script>
+
+</head>
+<body class="flexcenter">
+
+	<div id="d3" style="height:100%;"> </div>
+
+	<!-- Now we start messing with the flex object -->
+	<script type="text/javascript">
+
+
+		window.onload = function() {
+
+			var winback = require('win-backbone');
+
+			var backbone, backEmit, backLog;
+			var evoTestEnd;
+			var count = 0;
+
+			var experimentModule = 
+			{
+				winFunction : "experiment",
+				eventCallbacks : function(){ return {}; },
+				requiredEvents : function() {
+					return [
+			        "phylogeny:fullTreeOfArtifacts"
+						];
+				}
+			};
+
+			//this is strictly a fact finding mission 
+			//now we access the backbone thorugh this html page yo yo yo yo yo
+			//do this up front yo
+	    	backbone = new winback();
+
+
+	    	//the artifact type we're going to grab
+	    	var artType = "picArtifact";
+	    	
+	    	var exampleJSON = 
+			{
+				"win-data" : require("win-data"),
+				"win-phylogeny" : require("win-phylogeny"),
+				"experiment" : experimentModule
+			};
+
+			var configurations = 
+			{
+				"global" : {
+					server : "http://localhost",
+					port: 3000
+				},
+				"win-data" : {
+	                //these options aren't relevant -- might change in the future -- these are for win-neat module
+					logLevel : backbone.testing
+				},
+				"win-phylogeny" : {
+					logLevel : backbone.testing
+				}
+			};
+
+	    	backbone.logLevel = backbone.testing;
+
+	    	backEmit = backbone.getEmitter(experimentModule);
+	    	backLog = backbone.getLogger({winFunction:experimentModule.winFunction});
+	    	backLog.logLevel = backbone.testing;
+
+	    	//loading modules is synchronous
+	    	backbone.loadModules(exampleJSON, configurations);
+
+	    	// var registeredEvents = backbone.registeredEvents();
+	    	// var requiredEvents = backbone.moduleRequirements();
+	    		
+	    	// backLog('Backbone Events registered: ', registeredEvents);
+	    	// backLog('Required: ', requiredEvents);
+
+	    	backbone.initializeModules(function()
+	    	{
+	    		backLog("Finished Module Init! Ready for win communications");
+
+		    	//now we call asking for loading of seeds -- synchronous -- happens immediately (no callback)
+		        backEmit("phylogeny:fullTreeOfArtifacts", function(err, treeFunction)
+	        	{	
+	        		if(err)
+	        		{
+	        			console.error(err);
+	        			return;
+	        		}
+	        		//we got the tree info, this is dangerous, so we have an extra step for getting full artifacts
+	        		//no mis-writing code that fetches a full database
+	        		treeFunction(artType, "allplease", function(err, tree)
+	        		{
+	        			if(err)
+	        				console.error(err);
+	        			else{
+
+	        				backLog("Tree returned: ", tree);
+	        				//all done for now, need to display
+	        			}
+
+	        		});
+	        	});
+
+	 			// done();
+	    	});
+		}
+
+
+
+	
+	</script>
+
+
+
+
+</body>
+</html>
